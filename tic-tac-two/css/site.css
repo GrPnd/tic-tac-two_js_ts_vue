@@ -1,0 +1,139 @@
+.game-mode-container {
+    margin: 1rem;
+}
+
+.container {
+    margin: 1rem;
+}
+
+
+
+
+.board {
+    background-color: black;
+    display: inline-block ;
+}
+
+.row {
+    display: inline-block;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    margin: 1px;
+    font: 70px;
+
+}
+
+.grid {
+    border: 1px solid red;
+}
+
+
+
+.player-info-panel {
+    float: right;
+}
+
+.remaining-pieces-x, .remaining-pieces-o{
+    color: blue;
+    font-size: 20px;
+}
+
+.current-player {
+    color: purple;
+    font-size: 20px;
+}
+
+
+
+
+
+.winner {
+    color: green;
+    font-size: 20px;
+}
+
+.reset-button {
+    background-color: red;
+    color: white;
+    font-size: 20px;
+    padding: 10px;
+    margin: 10px;
+    border: none;
+}
+
+.reset-button:hover {
+    background-color: darkred;
+}
+
+
+
+
+
+.options-panel {
+
+}
+
+.new-piece {
+    font-size: 20px;
+    color: blueviolet;
+}
+
+.piece-move {
+    font-size: 20px;
+    color: blueviolet;
+}
+
+
+.grid-panel {
+
+}
+
+.grid-arrows-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 10px;
+}
+
+.arrow-btn {
+    width: 60px;
+    height: 60px;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+.up        { grid-column: 2; grid-row: 1; }
+.down      { grid-column: 2; grid-row: 3; }
+.left      { grid-column: 1; grid-row: 2; }
+.right     { grid-column: 3; grid-row: 2; }
+.up-left   { grid-column: 1; grid-row: 1; }
+.up-right  { grid-column: 3; grid-row: 1; }
+.down-left { grid-column: 1; grid-row: 3; }
+.down-right{ grid-column: 3; grid-row: 3; }
+
+
+
+.timer-container {
+
+}
+
+.timer-display {
+
+}
+
+.timer-buutton {
+    
+}
