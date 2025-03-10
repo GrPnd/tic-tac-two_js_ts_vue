@@ -1,27 +1,34 @@
 import { Timer } from './timer.js';
 
 export class UI {
-    constructor(game, handleMoveFn, aiFn) {
+    constructor(game, handleMoveFn, aiFn, checkWinFn) {
         this.game = game;
         this.handleMoveFn = handleMoveFn;
         this.aiFn = aiFn;
+        this.checkWinFn = checkWinFn;
         this.timer = new Timer();
     }
 
     drawUI() {
-        this.chooseGameMode();
-
         let container = document.createElement('div');
         container.classList.add('container');
+
+        let gameModes = this.chooseGameMode();
+        container.appendChild(gameModes);
 
         let board = this.createBoard();
         container.appendChild(board);
 
-        let infoPanel = this.createPlayerInfoPanel();
-        container.appendChild(infoPanel);
+        let rightPanel = document.createElement('div');
+        rightPanel.classList.add('right-panel');
 
-        let playerOptions = this.createOptionsPanel();
-        container.appendChild(playerOptions);
+        let infoPanel = this.createPlayerInfoPanel();
+        rightPanel.appendChild(infoPanel);
+
+        let playerOptions = this.createOptionsPanel();  
+        rightPanel.appendChild(playerOptions);
+
+        container.appendChild(rightPanel);
 
         return container;
     }
@@ -48,7 +55,6 @@ export class UI {
         pva.classList.add('pva');
         pva.innerHTML = 'Player vs AI';
         pva.addEventListener('click', () => {
-            this.timer.createTimer(this.game);
             this.game.gameType = 'PvA';
             document.querySelector('.game-mode').remove();
             this.createPlayerPieceSelection(gameModeContainer);
@@ -59,7 +65,7 @@ export class UI {
 
         gameModeContainer.appendChild(gameMode);
 
-        document.body.appendChild(gameModeContainer);
+        return gameModeContainer;
     }
 
     createPlayerPieceSelection(gameModeContainer) {
@@ -73,6 +79,7 @@ export class UI {
         x.addEventListener('click', () => {
             this.game.playerO = 'AI';
             gameModeContainer.remove();
+            this.timer.createTimer(this.game);
         });
 
         let o = document.createElement('button');
@@ -82,6 +89,7 @@ export class UI {
             this.game.playerX = 'AI';
             gameModeContainer.remove();
             this.aiFn();
+            this.timer.createTimer(this.game);
             this.timer.toggleTimer(this.game);
         });
 
@@ -94,39 +102,114 @@ export class UI {
 
     createBoard() {
         this.checkAndHandleAiMove();
-
+    
         let board = document.createElement('div');
         board.classList.add('board');
 
-        for (let i = 0; i < 5; i++) {
+        for (let x = 0; x < 5; x++) {
             let row = document.createElement('div');
             row.classList.add('row');
-            for (let j = 0; j < 5; j++) {
+    
+            for (let y = 0; y < 5; y++) {
                 let cell = document.createElement('div');
                 cell.classList.add('cell');
 
-                if (
-                    i >= this.game.gridStartX && i <= this.game.gridEndX &&
-                    j >= this.game.gridStartY && j <= this.game.gridEndY
-                ) {
+
+                if (this.game.isCellInGrid(x, y)) {
                     cell.classList.add('grid');
                 }
 
-                cell.addEventListener('click', (e) => {
-                    this.handleMoveFn(i, j, e);
+
+
+
+                cell.setAttribute('draggable', true);
+
+                cell.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', JSON.stringify({ x, y }));
                 });
 
-                cell.innerHTML = this.game.board[i][j] || '&nbsp;';
+                cell.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+
+
+                cell.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const data = e.dataTransfer.getData('text/plain');
+                    const { x: dragX, y: dragY } = JSON.parse(data);
+                    
+                    // Swap the content of the cells
+                    const draggedCell = this.game.board[dragX][dragY];
+                    const targetCell = this.game.board[x][y];
+                    
+                    if (this.game.gameState === 'Stopped') {
+                        return;
+                    }
+
+                    if (!this.game.currentPlayerCanMovePieceAndGrid()) {
+
+                        console.log('You cannot move a piece');
+                        return;
+                    }
+
+                    if (this.game.currentPlayer !== draggedCell) {
+                        console.log('You can only move your own pieces');
+                        return;
+                    }
+
+                    if (targetCell !== undefined) {
+                        console.log('Invalid move');
+                        return;
+                    }
+
+                    // Perform the cell swap logic
+                    this.game.board[dragX][dragY] = targetCell;
+                    this.game.board[x][y] = draggedCell;
+
+
+    
+                    // Re-render the board after the move
+                    this.game.changeTurn();
+                    this.updatePlayers();
+                    this.updateBoard();
+                    this.checkWinFn();               
+                });
+
+
+
+                
+                cell.addEventListener('click', (e) => {
+                    this.handleMoveFn(x, y, e);
+                });
+   
+               
+                cell.innerHTML = this.game.board[x][y] || '&nbsp;';
                 row.appendChild(cell);
             }
+    
             board.appendChild(row);
         }
+    
         return board;
     }
+    
+    updateBoard() {
+        // Clear the existing board
+        const boardContainer = document.querySelector('.board');
+        if (boardContainer) {
+            boardContainer.innerHTML = '';  // Clear the current board
+        }
 
+        // Create a new board based on the current game state
+        const newBoard = this.createBoard();  // This will create a fresh new board based on the updated state
+
+        // Append the new board to the container
+        if (boardContainer) {
+            boardContainer.appendChild(newBoard);  // Add the updated board
+        }
+    }
 
     checkAndHandleAiMove() {
-    console.log('asd');
         if (this.game.currentPlayer === 'X' && this.game.playerX === 'AI') {
             this.aiFn();
         }
@@ -223,4 +306,35 @@ export class UI {
     resetTimer() {
         this.timer.resetTimer();
     }
+
+    updatePlayers() {
+        let currentPlayerElement = document.querySelector('.current-player');
+        currentPlayerElement.innerHTML = `Current Player: ${this.game.currentPlayer}`;
+    
+        let remainingPiecesXElement = document.querySelector('.remaining-pieces-x');
+        remainingPiecesXElement.innerHTML = `Remaining Pieces X: ${this.game.remainingPiecesX}`;
+    
+        let remainingPiecesOElement = document.querySelector('.remaining-pieces-o');
+        remainingPiecesOElement.innerHTML = `Remaining Pieces O: ${this.game.remainingPiecesO}`;
+    }
+
+
+    generateResetButton() {
+        let resetButton = document.createElement('button');
+        resetButton.innerHTML = 'Reset';
+        resetButton.classList.add('reset-button');
+        document.body.appendChild(resetButton);
+        resetButton.addEventListener('click', () => { 
+            this.game.resetGame();
+            this.resetTimer();
+    
+            document.body.innerHTML = '';
+            let h1 = document.createElement('h1');
+            h1.innerHTML = 'Tic Tac Two';
+            document.body.appendChild(h1);
+            let board = this.drawUI(this.game, this.handleMoveFn, this.aiFn);
+            document.body.appendChild(board);
+        });
+    }
+    
 }

@@ -121,5 +121,20 @@ export class GameBrain {
         this.remainingPiecesO = 4;
         this.gameState = 'Stopped'
     }
+
+
+    isCurrentPlayersCell(x, y) {
+        console.log('isCurrentPlayersCell', x, y, this.#board[x][y], this.currentPlayer);
+        return this.#board[x][y] === this.currentPlayer;
+    }
+
+    currentPlayerCanMovePieceAndGrid() {
+        return (this.remainingPiecesX <= 2 && this.currentPlayer === 'X') || (this.remainingPiecesO <= 2 && this.currentPlayer === 'O');
+    }
+
+    isCellInGrid(x, y) {
+        return x >= this.gridStartX && x <= this.gridEndX &&
+        y >= this.gridStartY && y <= this.gridEndY;
+    }
     
 }

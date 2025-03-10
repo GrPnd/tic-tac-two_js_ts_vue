@@ -12,7 +12,7 @@ document.body.appendChild(h1);
 
 let game = new GameBrain();
 let winLogic = new WinLogic();
-let ui = new UI(game, handleMove, handleAI);
+let ui = new UI(game, handleMove, handleAI, checkWinFn);
 let ai = new AI(game);
 
 function handleAI() {
@@ -25,7 +25,7 @@ function handleAI() {
 
     ai.makeAMove();
     drawBoard();
-    updatePlayers();
+    ui.updatePlayers();
     updateMoveOptions();
     checkWinFn();
     return;
@@ -35,25 +35,10 @@ function handleMove(x, y, e) {
     if (game.gameState === 'Stopped') {
         return;
     }
-
-    // move piece
-    if (game.remainingPiecesX <= 2 && game.currentPlayer === 'X' && game.board[x][y] === 'X' || game.remainingPiecesO <= 2 && game.currentPlayer === 'O' && game.board[x][y] === 'O') {
-
-        game.board[x][y] = undefined;
-        e.target.innerHTML = '&nbsp;';
-        if (game.currentPlayer === 'X') {
-            game.remainingPiecesX++;
-        }
-        else {
-            game.remainingPiecesO++;
-        }
-        checkWinFn();
-        return;
-    }
     
     // new move
     updateCell(x, y, e);
-    updatePlayers();
+    ui.updatePlayers();
     updateMoveOptions();
     checkWinFn();
 
@@ -67,10 +52,10 @@ function handleGridMove(direction) {
     if (game.gameState === 'Stopped') {
         return;
     }
-    
+    console.log('handleGridMove', direction);
     game.moveGrid(direction);
     drawBoard();
-    updatePlayers();
+    ui.updatePlayers();
     updateMoveOptions();
     checkWinFn();
 }
@@ -83,27 +68,16 @@ function updateCell(x, y, e) {
     e.target.innerHTML = game.board[x][y] || '&nbsp;';
 }
 
-function updatePlayers() {
-    let currentPlayerElement = document.querySelector('.current-player');
-    currentPlayerElement.innerHTML = `Current Player: ${game.currentPlayer}`;
-
-    let remainingPiecesXElement = document.querySelector('.remaining-pieces-x');
-    remainingPiecesXElement.innerHTML = `Remaining Pieces X: ${game.remainingPiecesX}`;
-
-    let remainingPiecesOElement = document.querySelector('.remaining-pieces-o');
-    remainingPiecesOElement.innerHTML = `Remaining Pieces O: ${game.remainingPiecesO}`;
-}
 
 function updateMoveOptions() {
     let gridMoveElement = document.querySelector('.grid-panel');
     let pieceMoveElement = document.querySelector('.piece-move');
-
-    if (game.remainingPiecesX <= 2 && game.currentPlayer === 'X' || game.remainingPiecesO <= 2 && game.currentPlayer === 'O') {
+    if (game.currentPlayerCanMovePieceAndGrid()) {
         gridMoveElement.innerHTML = 'Press to move the grid';
         let gridMoveElementArrows = ui.createGridMovePanelArrows(handleGridMove);
         gridMoveElement.appendChild(gridMoveElementArrows);
 
-        pieceMoveElement.innerHTML = 'Press your own piece to move it';
+        pieceMoveElement.innerHTML = 'Drag your own piece to an open cell';
     } 
 }
 
@@ -117,28 +91,12 @@ function checkWinFn() {
 
         ui.stopTimer(game);
 
-        generateResetButton();
+        ui.generateResetButton();
 
         let timerButton = document.querySelector('.timer-button');
         timerButton.remove();
 
     }
-}
-
-function generateResetButton() {
-    let resetButton = document.createElement('button');
-    resetButton.innerHTML = 'Reset';
-    resetButton.classList.add('reset-button');
-    document.body.appendChild(resetButton);
-    resetButton.addEventListener('click', () => { 
-        game.resetGame();
-        ui.resetTimer();
-
-        document.body.innerHTML = '';
-        document.body.appendChild(h1);
-        board = ui.drawUI(game, handleMove, handleAI);
-        document.body.appendChild(board);
-    });
 }
 
 
@@ -147,8 +105,10 @@ function drawBoard() {
     board.remove();
 
     board = ui.createBoard();
-    document.body.appendChild(board);
+
+    let container = document.querySelector('.container');
+    container.appendChild(board);
 }
 
-let board = ui.drawUI(game, handleMove, handleAI);
+let board = ui.drawUI(game, handleMove, handleAI, checkWinFn);
 document.body.appendChild(board);
