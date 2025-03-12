@@ -1,0 +1,223 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  max-width: 100%;
+}
+
+.game-mode-container {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  width: 180px;
+  text-align: center;
+}
+
+.pvp, .pva, .x, .o {
+  color: rgb(122, 94, 17);
+  width: 80%;
+  text-align: center;
+  margin-top: 5px;
+  font-size: 17px;
+}
+
+
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 100px);
+  grid-template-rows: repeat(5, 100px);
+  gap: 1px; /* Adds the space between cells */
+  background-color: black;
+  border-radius: 3px; /* Adding rounded corners for aesthetic */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow effect */
+  box-sizing: border-box;
+  border: 3px solid black;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  background-color: rgb(250, 247, 247);
+  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box; /* Ensures border is included in width/height */
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.cell:hover {
+  background-color: #cecccc;
+}
+
+.grid {
+  border: 1px solid red;
+}
+
+
+
+.right-panel {
+  position: absolute;
+  right: 70px;
+  top: 20%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between panels */
+}
+
+.player-info-panel,
+.options-panel {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  width: 230px;
+}
+
+
+
+.remaining-pieces-x, .remaining-pieces-o{
+  color: blue;
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.current-player {
+  color: purple;
+  font-size: 20px;
+  margin-bottom: 2rem;
+}
+
+
+
+
+
+.winner {
+  color: green;
+  font-size: 20px;
+}
+
+.reset-button {
+  background-color: red;
+  color: white;
+  font-size: 20px;
+  padding: 10px;
+  margin: 10px;
+  border: none;
+}
+
+.reset-button:hover {
+  background-color: darkred;
+}
+
+
+
+
+.new-piece, .piece-move, .grid-panel {
+  font-size: 20px;
+  color: blueviolet;
+  margin: 1rem;
+}
+
+
+.grid-arrows-panel {
+  display: grid;
+  grid-template-columns: repeat(3, 60px);
+  grid-template-rows: repeat(3, 60px);
+  gap: 10px;
+  writing-mode: horizontal-tb; /* Ensures text direction is normal */
+  direction: ltr; /* Left-to-right layout */
+}
+
+
+.arrow-btn {
+  width: 60px;
+  height: 60px;
+  border: none;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+.up        { grid-column: 2; grid-row: 1; }
+.down      { grid-column: 2; grid-row: 3; }
+.left      { grid-column: 1; grid-row: 2; }
+.right     { grid-column: 3; grid-row: 2; }
+.up-left   { grid-column: 1; grid-row: 1; }
+.up-right  { grid-column: 3; grid-row: 1; }
+.down-left { grid-column: 1; grid-row: 3; }
+.down-right{ grid-column: 3; grid-row: 3; }
+
+
+
+.timer-container {
+  position: absolute;
+  left: 200px;
+  top: 20%;
+  transform: translateY(-50%);
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  margin: 50px;
+  font-size: large;
+  text-align: center;
+  justify-content: center;
+}
+
+.timer-display {
+  color: rgb(73, 14, 150);
+}
+
+.timer-button {
+  background-color:rgb(73, 14, 150);
+  color: #e7dfdf;
+  display: inline-block;
+  padding: 13px;
+  font-size: 20px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 2px #999;
+
+}
+
+.timer-button:hover {background-color: rgb(106, 17, 223)}
+
+.timer-button:active {
+background-color: rgb(105, 22, 214);
+box-shadow: 0 5px #666;
+transform: translateY(4px);
+}
