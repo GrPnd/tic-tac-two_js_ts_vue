@@ -23,7 +23,6 @@ onMounted(() => {
             <div class="timer-display">Time: 0s</div>
             <button @click="timer.toggleTimer(game)" class="timer-button">Start timer</button>
         </div>
-
         <button @click="game.resetGame(); timer.resetTimer();" class="reset-button">Reset game</button>
     </div>
 </template>
